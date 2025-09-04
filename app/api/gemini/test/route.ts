@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { geminiService } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
+  let inputMessage: string | undefined;
   try {
     const { message } = await request.json();
+    inputMessage = typeof message === 'string' ? message : undefined;
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
@@ -27,7 +29,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        fallback: geminiService.getFallbackResponse(message || 'test')
+        fallback: geminiService.getFallbackResponse(inputMessage || 'test')
       },
       { status: 500 }
     );
